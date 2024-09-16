@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Sistema de Mensagens - RabbitMQ</title>
+</head>
+<body>
+    <h1>Sistema de Mensagens</h1>
+
+    <div id="formulario">
+        <label for="mensagem">Escreva sua mensagem:</label>
+        <input type="text" id="mensagem" placeholder="Digite sua mensagem" />
+        <button onclick="enviarMensagem()">Enviar Mensagem</button>
+    </div>
+
+    <div id="mensagens">
+        <h2>Mensagens Recebidas:</h2>
+        <div id="lista-mensagens"></div>
+    </div>
+
+    <script>
+        // Função para enviar mensagem para o backend (FastAPI)
+        function enviarMensagem() {
+            const mensagem = document.getElementById('mensagem').value;
+
+            fetch('http://localhost:8000/enviar/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ mensagem: mensagem }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Sucesso:', data);
+                document.getElementById('mensagem').value = ''; // Limpa o campo de texto
+            })
+            .catch((error) => {
+                console.error('Erro:', error);
+            });
+        }
+
+        // Função para buscar e exibir as mensagens recebidas
+        function carregarMensagens() {
+            fetch('http://localhost:8000/consumir/')
+            .then(response => response.json())
+            .then(data => {
+                const listaMensagens = document.getElementById('lista-mensagens');
+                listaMensagens.innerHTML = ''; // Limpa a lista
+
+                // Itera pelas mensagens recebidas e exibe na página
+                data.mensagens.forEach(mensagem => {
+                    const div = document.createElement('div');
+                    div.classList.add('mensagem');
+                    div.textContent = mensagem;
+                    listaMensagens.appendChild(div);
+                });
+            })
+            .catch((error) => {
+                console.error('Erro:', error);
+            });
+        }
+
+        // Carrega as mensagens automaticamente ao iniciar a página
+        setInterval(carregarMensagens, 5000); // Atualiza a cada 5 segundos
+    </script>
+</body>
+</html>
