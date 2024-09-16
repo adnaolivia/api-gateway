@@ -9,16 +9,19 @@ app = FastAPI()
 # comunicacao com a API
 origins = [
     "http://localhost",  # frontend local
-    "http://localhost:8000",  # api local
+    "http://localhost:8000",
+    "http://localhost:8000/consumir/",
+    "http://localhost:8000/enviar/"  # api local
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # enviar mensagem
 @app.post("/enviar/")
