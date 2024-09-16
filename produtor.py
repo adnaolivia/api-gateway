@@ -11,4 +11,4 @@ def publicar_mensagem(mensagem):
     print(f"Mensagem publicada: {mensagem}")
     conexao.close()
 
-publicar_mensagem('Oi, RabbitMQ!')
+publicar_mensagem('teste')
